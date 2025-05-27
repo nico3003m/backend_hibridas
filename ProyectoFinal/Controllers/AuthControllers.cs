@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoFinal.Models;
 using ProyectoFinal.Data;
-using ProyectoFinal.Service;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ProyectoFinal.Controllers
@@ -11,15 +11,16 @@ namespace ProyectoFinal.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly JwtService _jwtService;
 
-        public AuthController(AppDbContext context, JwtService jwtService)
+
+        public AuthController(AppDbContext context)
         {
             _context = context;
-            _jwtService = jwtService;
+
         }
 
-        [HttpPost("register")]
+        [HttpPost]
+        [Route("register")]
         public async Task<IActionResult> Register([FromBody] Usuario usuario)
         {
             var existe = await _context.Usuarios.AnyAsync(u => u.Identificacion == usuario.Identificacion);
@@ -34,7 +35,8 @@ namespace ProyectoFinal.Controllers
             return Ok(usuario);
         }
 
-        [HttpPost("login")]
+        [HttpPost]
+        [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginData)
         {
             var usuario = await _context.Usuarios
@@ -45,12 +47,11 @@ namespace ProyectoFinal.Controllers
                 return Unauthorized("Credenciales incorrectas");
             }
 
-            // Generar JWT
-            var token = _jwtService.GenerateToken(usuario.Id, usuario.Correo);
+            // Guardar el Id en session
+            HttpContext.Session.SetInt32("UserId", usuario.Id);
 
             return Ok(new
             {
-                token,
                 usuario.Id,
                 usuario.Nombre,
                 usuario.Correo
