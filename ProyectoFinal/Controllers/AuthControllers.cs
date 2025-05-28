@@ -57,5 +57,15 @@ namespace ProyectoFinal.Controllers
                 usuario.Correo
             });
         }
+
+        [HttpGet("list")]
+        public async Task<ActionResult<IEnumerable<Usuario>>> Getusurio()
+        {
+           var usurio = await _context.Usuarios
+
+                .ToListAsync();
+
+            return Ok(usurio);
+        }
     }
 }

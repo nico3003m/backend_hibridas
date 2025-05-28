@@ -7,7 +7,7 @@ namespace ProyectoFinal.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    // Quitamos el Authorize porque no usaremos JWT
+    
     public class ClienteController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -24,7 +24,7 @@ namespace ProyectoFinal.Controllers
         }
 
         // GET: api/cliente/list
-        [HttpGet("list")]
+        [HttpGet("list/")]
         public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes()
         {
             var usuarioId = GetUserIdFromSession();
